@@ -1,0 +1,95 @@
+﻿@using Sitecore.Mvc
+@using Sitecore.Mvc.Presentation
+@using Sitecore.Web.UI.Controls.Common.UserControls
+@model RenderingModel
+@{
+    var rendering = Html.Sitecore().Controls().GetUserControl(Model.Rendering);
+    rendering.Class = "sc-listcontrol sc-DeleteMultipleSubItems";
+    rendering.Requires.Script("client", "DeleteMultipleSubItems.js");
+
+    rendering.GetString("subitems", "subitems");
+    rendering.GetString("databases", "databases");
+    var htmlAttributes = rendering.HtmlAttributes;
+}
+
+<div @htmlAttributes>
+    <div id="divDeleteMultipleSubItems">
+        <div class="container" style="width:auto">
+            <div class="row" style="margin-top:8px; margin-left:5px;">
+                <input type="text" size="50" id="txtParentItemId" placeholder="Parent Item ID" />
+            </div>
+            <div class="row" style="margin-top:8px; margin-left:5px;">
+                <input type="text" size="50" id="txtTemplateId" placeholder="Template ID" />
+            </div>
+            <div class="row" style="margin-top:8px; margin-left:5px;">
+               Database: <select id="selectDatabases">
+                </select>
+            </div>
+            <div class="row" style="margin-top:8px; margin-left:5px;">
+                <div class="col-md-4" style="padding-left: 0px !important;">
+                    <button id="btnShowAllChild" onclick="javascript: app.GetSubItems()">Show Sub-Items</button>
+                </div>
+                <div class="col-md-6 pull-right" style="padding-right: 23px !important;">
+                    <div id="postActionss" class="postActions pull-right" style="display:none">
+                        <span id="totalResultFound"></span>
+                        <input onchange="javascript: Selectall(this)" type="checkbox" ID="chkall" style="display:none; margin-left:5px;" class="JchkAll" />Select/Deselect All
+                        <button id="btnDeleteSelectedItemsTop" style="display:none" onclick="javascript: app.deleteSelectedItems()" class="btn btnDeleteSelectedItems">Delete Selected Items</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:8px; margin-left:5px;">
+                <span class="noresultfound" style="display:none">No Result Found!</span>
+            </div>
+            <div class="sc-listcontrol-body" style="margin: 0px 8px 0px 8px;">
+                <table class="sc-table table deleteTableHeader">
+                    <thead class="sc-table-header">
+                        <tr>
+                            <th class="sc-table-head">Item Name</th>
+                            <th class="sc-table-head">Item ID</th>
+                            <th class="sc-table-head ">Item Path</th>
+                            <th class="sc-table-head">Database</th>
+                            <th class="sc-table-head">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: subitems">
+                        <tr>
+                            <td class="ventilate sc-table-sortable up">
+                                <span data-bind="text:ItemName"></span>
+                            </td>
+                            <td class="ventilate">
+                                <span data-bind="text:ItemID"></span>
+                            </td>
+                            <td class="ventilate">
+                                <strong>
+                                    <span data-bind="text:ItemPath,style:{color:'#00000',width: '25px'} "></span>
+                                </strong>
+                            </td>
+                            <td class="ventilate">
+                                <span data-bind="text:Database"></span>
+                            </td>
+                            <td class="ventilate">
+                                <input type="checkbox" class="JchkGrid" onchange="filterToggle(this)" data-bind="text:ItemID" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="pull-right" style="padding-right: 23px !important;">
+                    <div id="postActions" class="postActions" style="display:none; margin-left:8px; margin-top:5px;">
+                        <input onchange="javascript: Selectall(this)" type="checkbox" ID="chkalll" style="display:none" class="JchkAll" />Select/Deselect All
+                        <button id="btnDeleteSelectedItemsBottom" style="display:none" onclick="javascript: app.deleteSelectedItems()" class="btn btnDeleteSelectedItems">Delete Selected Items</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row" style="margin-left: 8px;">
+                <div id="responseResult" style="display:none; margin-top:5px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="~/Assets/js/colResizable-1.6.min.js"></script>
