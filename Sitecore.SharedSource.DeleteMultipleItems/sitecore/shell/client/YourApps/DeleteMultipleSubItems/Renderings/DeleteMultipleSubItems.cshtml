@@ -15,30 +15,31 @@
 <div @htmlAttributes>
     <div id="divDeleteMultipleSubItems">
         <div class="container" style="width:auto">
-            <div class="row" style="margin-top:8px; margin-left:5px;">
-                <input type="text" size="50" id="txtParentItemId" placeholder="Parent Item ID" />
-            </div>
-            <div class="row" style="margin-top:8px; margin-left:5px;">
-                <input type="text" size="50" id="txtTemplateId" placeholder="Template ID" />
-            </div>
-            <div class="row" style="margin-top:8px; margin-left:5px;">
-               Database: <select id="selectDatabases">
-                </select>
-            </div>
-            <div class="row" style="margin-top:8px; margin-left:5px;">
-                <div class="col-md-4" style="padding-left: 0px !important;">
-                    <button id="btnShowAllChild" onclick="javascript: app.GetSubItems()">Show Sub-Items</button>
+            <div class="form-group center-block">
+                <div class="row" style="margin-top:8px; margin-left:5px;">
+                    <input type="text" class="form-control" size="50" id="txtParentItemId" placeholder="Parent Item ID" />
                 </div>
-                <div class="col-md-6 pull-right" style="padding-right: 23px !important;">
-                    <div id="postActionss" class="postActions pull-right" style="display:none">
-                        <span id="totalResultFound"></span>
-                        <input onchange="javascript: Selectall(this)" type="checkbox" ID="chkall" style="display:none; margin-left:5px;" class="JchkAll" />Select/Deselect All
-                        <button id="btnDeleteSelectedItemsTop" style="display:none" onclick="javascript: app.deleteSelectedItems()" class="btn btnDeleteSelectedItems">Delete Selected Items</button>
+                <div class="row" style="margin-top:8px; margin-left:5px;">
+                    <input type="text" class="form-control" size="50" id="txtTemplateId" placeholder="Template ID" />
+                </div>
+                <div class="row" style="margin-top:8px; margin-left:5px;">
+                    Database: <select id="selectDatabases"></select>
+                </div>
+                <div class="row" style="margin-top:8px; margin-left:5px;">
+                    <div class="col-md-4" style="padding-left: 0px !important;">
+                        <button id="btnShowAllChild" class="btn" onclick="javascript: app.GetSubItems()">Show Sub-Items</button>
+                    </div>
+                    <div class="col-md-6 pull-right" style="padding-right: 23px !important;">
+                        <div id="postActionss" class="postActions pull-right" style="display:none">
+                            <span id="totalResultFound"></span>
+                            <input onchange="javascript: Selectall(this)" type="checkbox" ID="chkall" style="display:none; margin-left:5px;" class="JchkAll" />Select/Deselect All
+                            <button id="btnDeleteSelectedItemsTop" style="display:none" onclick="javascript: app.deleteSelectedItems()" class="btn btnDeleteSelectedItems">Delete Selected Items</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row" style="margin-top:8px; margin-left:5px;">
-                <span class="noresultfound" style="display:none">No Result Found!</span>
+                <div class="row" style="margin-top:8px; margin-left:5px;">
+                    <span class="noresultfound" style="display:none">No Result Found!</span>
+                </div>
             </div>
             <div class="sc-listcontrol-body" style="margin: 0px 8px 0px 8px;">
                 <table class="sc-table table deleteTableHeader">
@@ -92,4 +93,4 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="~/Assets/js/colResizable-1.6.min.js"></script>
+<script src="~/sitecore/shell/client/YourApps/DeleteMultipleSubItems/Renderings/colResizable-1.6.min.js"></script>
