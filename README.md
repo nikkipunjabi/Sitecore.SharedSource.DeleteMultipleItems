@@ -8,7 +8,7 @@ Delete Multiple Items - A module for Content Authors to Delete Multiple Items.
 
 # About
 
-  -  A Module for deleting Multiple Sitecore Items. This application was built first as an ASPX page (You can access it with /sitecore/admin/DeleteMultipleItems/DeleteMultipleItems.aspx), then provided an option in Sitecore Start Menu which can be used as an application as shown in screenshot. After that I learnt and explored Speak application via Knockout JS and then built a new application based on SPEAK UI which can run on Sitecore 8.0. Download the package based on the Sitecore version in which you are going to install.
+  -  A Module for deleting Multiple Sitecore Items. This application was built first as an ASPX page (You can access it with /sitecore/admin/DeleteMultipleItems/DeleteMultipleItems.aspx), then provided an option in Sitecore Start Menu which can be used as an application as shown in screenshot. After that I learnt and explored Speak application via Knockout JS and then built a new application based on SPEAK UI which can run on Sitecore 8.2. Download the package based on the Sitecore version in which you are going to install.
 
 Delete Multiple Items-0.1 (This is for all Sitecore versions):
   - Sitecore Core DB Items: 
