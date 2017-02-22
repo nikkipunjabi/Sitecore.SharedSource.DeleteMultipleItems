@@ -15,18 +15,24 @@
                 url: "/api/sitecore/DeleteMultipleItems/GetDatabase",
                 cache: false,
                 success: function (data) {
-                    if (data.length > 0) {
+                    if (data.length > 1) {
                         $('#selectDatabases').show();
-                        $.each(data, function (i, item) {
-                            $('#selectDatabases').append($('<option>', {
-                                value: item.Value,
-                                text: item.Value
-                            }));
-
-                        });
+                        $('#selectDatabases').append($('<option>', {
+                            value: data[1].Value,
+                            text: data[1].Value
+                        }));
+                    }
+                    else if (data.length == 1 && data[0].Value == false) {
+                        $('#selectDatabases').hide();
+                        $('.topHeader').hide();
+                        $('.noresultfound').html('<h2>You are not an authorized user</h2>');
+                        $('.noresultfound').show();
                     }
                     else {
                         $('#selectDatabases').hide();
+                        $('.topHeader').hide();
+                        $('.noresultfound').html('<h2>Some error occurred!</h2>');
+                        $('.noresultfound').show();
                     }
                 }
             });

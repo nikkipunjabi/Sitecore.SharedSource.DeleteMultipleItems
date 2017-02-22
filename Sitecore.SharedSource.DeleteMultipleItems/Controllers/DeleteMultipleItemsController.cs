@@ -44,79 +44,93 @@ namespace Sitecore.SharedSource.DeleteMultipleItems.Controllers
         {
             dynamic obj = new ExpandoObject();
 
-            try
+            if (Sitecore.Context.User != null && Sitecore.Context.User.IsAdministrator)
             {
-                //obj.contentDatabase = Sitecore.Context.ContentDatabase.Name;
-                if (Sitecore.Context.ContentDatabase != null)
+                obj.isAdmin = true;
+                try
                 {
-                    obj.databases = Sitecore.Context.ContentDatabase.Name;
+                    //obj.contentDatabase = Sitecore.Context.ContentDatabase.Name;
+                    if (Sitecore.Context.ContentDatabase != null)
+                    {
+                        obj.database = Sitecore.Context.ContentDatabase.Name;
+                    }
+                    else
+                    {
+                        obj.database = Factory.GetDatabase("master").Name;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    obj.databases = Factory.GetDatabase("master").Name;
+                    Log.Error("Error in Sitecore.SharedSource.DeleteMultipleSubItems.GetDatabase", ex, this);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error("Error in Sitecore.SharedSource.DeleteMultipleSubItems.GetDatabase", ex, this);
+                obj.isAdmin = false;
             }
             return Json(obj, JsonRequestBehavior.AllowGet);
+
         }
 
         public ActionResult GetSubItems(string parentItemID, string templateID, string database)
         {
+
             var result = new Result();
 
-            if (!string.IsNullOrWhiteSpace(parentItemID) && !string.IsNullOrWhiteSpace(database) && Sitecore.Data.ID.IsID(parentItemID))
+            if (Sitecore.Context.User != null && Sitecore.Context.User.IsAdministrator)
             {
-                try
+
+                if (!string.IsNullOrWhiteSpace(parentItemID) && !string.IsNullOrWhiteSpace(database) && Sitecore.Data.ID.IsID(parentItemID))
                 {
-                    var templateId = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(templateID) && Sitecore.Data.ID.IsID(templateID))
+                    try
                     {
-                        templateId = templateID;
-                    }
-                    var parentItem = Factory.GetDatabase(database).GetItem(parentItemID);
-                    if (parentItem != null)
-                    {
-                        StringBuilder startItemPath = new StringBuilder(@"/");
-                        startItemPath.Append(string.Join("/", parentItem.Paths.FullPath.Split(new char[] { '/' },
-                        StringSplitOptions.RemoveEmptyEntries).Select(x => string.Format("#{0}#", x))));
-
-                        List<Item> allChildItems = null;
-
-                        if (string.IsNullOrWhiteSpace(templateId))
+                        var templateId = string.Empty;
+                        if (!string.IsNullOrWhiteSpace(templateID) && Sitecore.Data.ID.IsID(templateID))
                         {
-                            allChildItems = Factory.GetDatabase(database).SelectItems("fast:" + startItemPath + "/*").ToList();
+                            templateId = templateID;
+                        }
+                        var parentItem = Factory.GetDatabase(database).GetItem(parentItemID);
+                        if (parentItem != null)
+                        {
+                            StringBuilder startItemPath = new StringBuilder(@"/");
+                            startItemPath.Append(string.Join("/", parentItem.Paths.FullPath.Split(new char[] { '/' },
+                            StringSplitOptions.RemoveEmptyEntries).Select(x => string.Format("#{0}#", x))));
+
+                            List<Item> allChildItems = null;
+
+                            if (string.IsNullOrWhiteSpace(templateId))
+                            {
+                                allChildItems = Factory.GetDatabase(database).SelectItems("fast:" + startItemPath + "/*").ToList();
+                            }
+                            else
+                            {
+                                allChildItems = Factory.GetDatabase(database).SelectItems("fast:" + startItemPath + "/*[@@templateid = '" + templateId + "']").ToList();
+                            }
+
+                            if (allChildItems != null && allChildItems.Any())
+                            {
+                                result.SubItems = allChildItems.Select(x => new SCSubItems(x)).ToList();
+                                result.result = "Found";
+                                return Json(result, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                //chkall.Visible = btnDeleteAllChild.Visible = false;
+                                //NoResultFound.Visible = true;
+                            }
                         }
                         else
                         {
-                            allChildItems = Factory.GetDatabase(database).SelectItems("fast:" + startItemPath + "/*[@@templateid = '" + templateId + "']").ToList();
-                        }
-
-                        if (allChildItems != null && allChildItems.Any())
-                        {
-                            result.SubItems = allChildItems.Select(x => new SCSubItems(x)).ToList();
-                            result.result = "Found";
-                            return Json(result, JsonRequestBehavior.AllowGet);
-                        }
-                        else
-                        {
-                            //chkall.Visible = btnDeleteAllChild.Visible = false;
+                            //btnDeleteAllChild.Visible = false;
                             //NoResultFound.Visible = true;
+                            //chkall.Visible = false;
                         }
+                        //https://www.asp.net/web-forms/overview/data-access/enhancing-the-gridview/adding-a-gridview-column-of-checkboxes-cs
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        //btnDeleteAllChild.Visible = false;
-                        //NoResultFound.Visible = true;
-                        //chkall.Visible = false;
+                        Log.Error("Error in Sitecore.SharedSource.GetSubItems", ex, this);
                     }
-                    //https://www.asp.net/web-forms/overview/data-access/enhancing-the-gridview/adding-a-gridview-column-of-checkboxes-cs
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error in Sitecore.SharedSource.GetSubItems", ex, this);
                 }
             }
 
@@ -127,55 +141,57 @@ namespace Sitecore.SharedSource.DeleteMultipleItems.Controllers
         public ActionResult DeleteSelectedItems(string[] selectedIds, string database)
         {
             var responseString = string.Empty;
-
-            if (!(string.IsNullOrWhiteSpace(database)) && selectedIds != null && selectedIds.Any())
+            if (Sitecore.Context.User != null && Sitecore.Context.User.IsAdministrator)
             {
-                // Iterate through the Products.Rows property
-                List<Item> deleteChildItems = new List<Item>();
-
-                foreach (var id in selectedIds)
+                if (!(string.IsNullOrWhiteSpace(database)) && selectedIds != null && selectedIds.Any())
                 {
-                    if (Sitecore.Data.ID.IsID(id))
+                    // Iterate through the Products.Rows property
+                    List<Item> deleteChildItems = new List<Item>();
+
+                    foreach (var id in selectedIds)
                     {
-                        var deleteItem = Factory.GetDatabase(database).GetItem(id);
-                        if (deleteItem != null && deleteItem.HasChildren)
+                        if (Sitecore.Data.ID.IsID(id))
                         {
-                            foreach (var child in deleteItem.Children.ToList())
+                            var deleteItem = Factory.GetDatabase(database).GetItem(id);
+                            if (deleteItem != null && deleteItem.HasChildren)
                             {
-                                deleteChildItems.Add(child);
+                                foreach (var child in deleteItem.Children.ToList())
+                                {
+                                    deleteChildItems.Add(child);
+                                }
                             }
-                        }
-                        if (deleteItem != null)
-                        {
-                            deleteChildItems.Add(deleteItem);
-                        }
-                    }
-                }
-
-                if (deleteChildItems != null && deleteChildItems.Any())
-                {
-                    try
-                    {
-                        using (new SecurityDisabler())
-                        {
-                            foreach (var item in deleteChildItems)
+                            if (deleteItem != null)
                             {
-                                var itemID = item.ID;
-                                var itemName = item.Name;
-                                var itemPath = item.Paths.FullPath;
-                                RemoveReferenceLinks(item);
-                                DeleteItem(item);
-
-                                // "Delete" the row
-                                responseString += string.Format(
-                                    "Deleted Item Id: {0} Item Name: {1} Item Path: {2} <br />", itemID, itemName, itemPath);
+                                deleteChildItems.Add(deleteItem);
                             }
                         }
                     }
-                    catch (Exception ex)
+
+                    if (deleteChildItems != null && deleteChildItems.Any())
                     {
-                        Log.Error("Error in DeleteAllChild", ex, this);
-                        responseString += string.Format("There was an error: " + ex);
+                        try
+                        {
+                            using (new SecurityDisabler())
+                            {
+                                foreach (var item in deleteChildItems)
+                                {
+                                    var itemID = item.ID;
+                                    var itemName = item.Name;
+                                    var itemPath = item.Paths.FullPath;
+                                    RemoveReferenceLinks(item);
+                                    DeleteItem(item);
+
+                                    // "Delete" the row
+                                    responseString += string.Format(
+                                        "Deleted Item Id: {0} Item Name: {1} Item Path: {2} <br />", itemID, itemName, itemPath);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error in DeleteAllChild", ex, this);
+                            responseString += string.Format("There was an error: " + ex);
+                        }
                     }
                 }
             }

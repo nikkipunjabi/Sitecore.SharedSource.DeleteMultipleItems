@@ -3,6 +3,7 @@ using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.SecurityModel;
+using Sitecore.sitecore.admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,17 @@ namespace Sitecore.SharedSource.DeleteMultipleItems.sitecore.admin.DeleteMultipl
         public string ItemDatabase { get; set; }
         public string ItemID { get; set; }
     }
-    public partial class DeleteMultipleItems : System.Web.UI.Page
+    public partial class DeleteMultipleItems : AdminPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             chkall.Attributes.Add("onchange", "javascript: Selectall();");
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+            CheckSecurity(true); //Required!
+            base.OnInit(e);
         }
 
         protected void btnShowAllChild_Click(object sender, EventArgs e)

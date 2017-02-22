@@ -27,7 +27,6 @@
     <form runat="server">
         <div class="container text-center">
             <div class="row">
-
                 <h2>Delete Multiple Items</h2>
             </div>
             <div class="form-group center-block">
