@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="sitecore\admin\DeleteMultipleItems.aspx" />
     <Content Include="sitecore\admin\DeleteMultipleItems\DeleteMultipleItems.aspx" />
     <Content Include="sitecore\shell\client\YourApps\DeleteMultipleSubItems\Renderings\colResizable-1.6.min.js" />
     <Content Include="sitecore\shell\client\YourApps\DeleteMultipleSubItems\Renderings\DeleteMultipleSubItems.js" />
